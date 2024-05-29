@@ -19,21 +19,6 @@
         enabled: yes
         state: started
 
-    - name: Secure MariaDB installation
-      expect:
-        command: mysql_secure_installation
-        responses:
-          "Enter current password for root.*": ""
-          "Switch to unix_socket authentication.*": "n"
-          "Change the root password.*": "Y"
-          "New password.*": "your_new_password"
-          "Re-enter new password.*": "your_new_password"
-          "Remove anonymous users.*": "Y"
-          "Disallow root login remotely.*": "Y"
-          "Remove test database and access to it.*": "Y"
-          "Reload privilege tables now.*": "Y"
-      no_log: true  # To avoid logging sensitive information
-
     - name: Ensure MariaDB is running
       systemd:
         name: mariadb
