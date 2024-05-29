@@ -1,0 +1,19 @@
+- hosts: mariadb
+  roles:
+    - role: mahdi22.mariadb_install
+      become: yes
+      vars:
+        deny_remote_connections: False
+        mysql_root_password: "azerty"
+        create_database: true
+        database: public
+        create_db_user: true
+        db_user_name: db_user
+        db_user_password: password
+        use_proxy: yes
+        proxy_env:
+          http_proxy: http://proxy.local:8080/
+          https_proxy: http://proxy.local:8080/
+        import_sql_file: true
+        sql_file_name:
+          - schema.sql
