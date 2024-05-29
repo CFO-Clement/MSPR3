@@ -1,0 +1,40 @@
+---
+- name: Install and configure MariaDB on Debian
+  hosts: all
+  become: yes
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install MariaDB Server
+      apt:
+        name: mariadb-server
+        state: present
+
+    - name: Start and enable MariaDB service
+      systemd:
+        name: mariadb
+        enabled: yes
+        state: started
+
+    - name: Secure MariaDB installation
+      expect:
+        command: mysql_secure_installation
+        responses:
+          "Enter current password for root.*": ""
+          "Switch to unix_socket authentication.*": "n"
+          "Change the root password.*": "Y"
+          "New password.*": "your_new_password"
+          "Re-enter new password.*": "your_new_password"
+          "Remove anonymous users.*": "Y"
+          "Disallow root login remotely.*": "Y"
+          "Remove test database and access to it.*": "Y"
+          "Reload privilege tables now.*": "Y"
+      no_log: true  # To avoid logging sensitive information
+
+    - name: Ensure MariaDB is running
+      systemd:
+        name: mariadb
+        state: started
