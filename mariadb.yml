@@ -1,4 +1,4 @@
-- hosts: mariadb
+- hosts: all
   roles:
     - role: mahdi22.mariadb_install
       become: yes
