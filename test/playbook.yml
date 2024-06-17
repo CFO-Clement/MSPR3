@@ -1,0 +1,103 @@
+---
+- hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    mariadb_root_password: "rootmdp"
+    mariadb_root_new_password: "nouveaumdp"
+    mariadb_admin_password: "adminmdp"
+    prometheus_version: "2.36.0"
+    mysqld_exporter_version: "0.13.0"
+
+  tasks:
+    - name: Installation de MariaDB
+      apt:
+        name: mariadb-server
+        state: present
+        update_cache: yes
+
+    - name: Configuration de MariaDB
+      template:
+        src: my.cnf.j2
+        dest: /etc/mysql/my.cnf
+
+    - name: Sécurisation de MariaDB
+      mysql_user:
+        login_user: root
+        login_password: "{{ mariadb_root_password }}"
+        name: root
+        password: "{{ mariadb_root_new_password }}"
+        host_all: yes
+
+    - name: Création d'utilisateur admin pour MariaDB
+      mysql_user:
+        login_user: root
+        login_password: "{{ mariadb_root_new_password }}"
+        name: admin
+        password: "{{ mariadb_admin_password }}"
+        priv: '*.*:ALL,GRANT'
+        state: present
+    - name: Exécution du script SQL
+      mysql_db:
+        login_user: admin
+        login_password: "{{ mariadb_admin_password }}"
+        name: ma_base
+        state: import
+        target: /path/to/your/script.sql
+  
+    - name: Installation de Prometheus
+      get_url:
+        url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
+        dest: "/tmp/prometheus.tar.gz"
+      unarchive:
+        src: "/tmp/prometheus.tar.gz"
+        dest: "/opt/"
+        remote_src: yes
+
+    - name: Configuration de Prometheus pour surveiller MariaDB
+      copy:
+        content: |
+          global:
+            scrape_interval: 15s
+          scrape_configs:
+            - job_name: 'mariadb'
+              static_configs:
+                - targets: ['localhost:9104']
+        dest: "/opt/prometheus-{{ prometheus_version }}.linux-amd64/prometheus.yml"
+
+    - name: Téléchargement de l'exporteur MariaDB
+      get_url:
+        url: "https://github.com/prometheus/mysqld_exporter/releases/download/v{{ mysqld_exporter_version }}/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64.tar.gz"
+        dest: "/tmp/mysqld_exporter.tar.gz"
+    - name: Extraction de l'exporteur MariaDB
+      unarchive:
+        src: "/tmp/mysqld_exporter.tar.gz"
+        dest: "/opt/"
+        remote_src: yes
+
+    - name: Configuration de l'exporteur MariaDB
+      copy:
+        content: |
+          DATA_SOURCE_NAME='admin:{{ mariadb_admin_password }}@(localhost:3306)/'
+        dest: "/opt/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64/.env"
+
+    - name: Installation de Grafana
+      apt_repository:
+        repo: 'deb https://packages.grafana.com/oss/deb stable main'
+        state: present
+      apt:
+        name: grafana
+        state: present
+        update_cache: yes
+      systemd:
+        name: grafana-server
+        enabled: yes
+        state: started
+
+    - name: Démarrage de l'exporteur MariaDB
+      systemd:
+        name: mysqld_exporter
+        enabled: yes
+        state: started
+        exec_start_pre: "/bin/chmod +x /opt/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64/mysqld_exporter"
+        exec_start: "/opt/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64/mysqld_exporter --config.my-cnf=/opt/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64/.env"
