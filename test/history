@@ -1,0 +1,99 @@
+    1  su -
+    2  sudo apt update
+    3  sudo apt upgrade
+    4  sudo apt install python3 wget git vim spice-vdagent 
+    5  rebooy
+    6  reboot
+    7  sudo reboot
+    8  sudo apt install ansible
+    9  mkdir test
+   10  cd test/
+   11  vim playbook.yml
+   12  vim my.cnf.j2
+   13  vim schema.sql
+   14  ansible-playbook playbook.yml 
+   15  vim playbook.yml
+   16  sudo su
+   17  ansible-playbook playbook.yml 
+   18  vim playbook.yml
+   19  ansible-playbook playbook.yml 
+   20  vim playbook.yml
+   21  cat playbook.yml
+   22  vim playbook.yml
+   23  ansible-playbook playbook.yml 
+   24  vim playbook.yml
+   25  ansible-playbook playbook.yml 
+   26  vim playbook.yml
+   27  ansible-playbook playbook.yml 
+   28  vim playbook.yml
+   29  ansible-playbook playbook.yml 
+   30  vim playbook.yml
+   31  ansible-playbook playbook.yml 
+   32  sudo apt install python2
+   33  ansible-playbook playbook.yml 
+   34  python --version
+   35  python3 --version
+   36  python3 -m pip install pymysql
+   37  sudo apt install python-pip
+   38  sudo apt install python3-pip
+   39  ansible-playbook playbook.yml 
+   40  python3 -m pip install pymysql
+   41  ansible-playbook playbook.yml 
+   42  sudo apt install python2-pip
+   43  python2 -m pip install pymysql
+   44  sudo apt update
+   45  curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+   46  sudo python2 get-pip.py
+   47  ls
+   48  sudo apt install curl
+   49  curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py
+   50  sudo python2 get-pip.py
+   51  python2 -m pip install pymysql
+   52  ansible-playbook playbook.yml 
+   53  python3 -c "import pymysql"
+   54  vim playbook.yml
+   55  ansible-playbook playbook.yml 
+   56  ansible-playbook playbook.yml -vvv
+   57  /usr/bin/python3 -c " import pymysql" 
+   58  /usr/bin/python3 -c "import pymysql" 
+   59  ansible-galaxy collection install community.mysql --force
+   60  ansible-playbook playbook.yml 
+   61  vim playbook.yml
+   62  ansible-playbook playbook.yml 
+   63  /usr/bin/python3 -c "import pymysql; print(pymysql.__version__)"
+   64  vim ansible.cfg
+   65  ansible-playbook playbook.yml 
+   66  python3 -m pip install mysqlclient
+   67  ansible-playbook playbook.yml 
+   68  sudo /usr/bin/python3 -m pip uninstall pymysql
+   69  sudo /usr/bin/python3 -m pip install pymysql
+   70  ansible-playbook playbook.yml 
+   71  cat my.cnf.j2 
+   72  cat playbook.yml 
+   73  mysql
+   74  mysql root@localhost
+   75  mysql -u root
+   76  sudo mysql -u root
+   77  sudo mysql
+   78  vim ansible.cfg
+   79  ls
+   80  vim playbook.yml ]
+   81  ls
+   82  vim ansible.cfg
+   83  cat playbook.yml 
+   84  ansible-playbook playbook.yml 
+   85  vim playbook.yml ]
+   86  vim playbook.yml
+   87  ansible-playbook playbook.yml 
+   88  vim playbook.yml
+   89  ansible-playbook playbook.yml 
+   90  sudo mysql
+   91  ls
+   92  cat my.cnf.j2 
+   93  vim playbook.yml
+   94  ansible-playbook playbook.yml 
+   95  vim playbook.yml
+   96  ansible-playbook playbook.yml 
+   97  sudo mysql -u root
+   98  sudo mysql 
+   99  history
