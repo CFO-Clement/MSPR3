@@ -50,28 +50,87 @@
         state: import
         target: schema.sql
   
-    - name: Installation de Prometheus
-      get_url:
-        url: "https://github.com/prometheus/prometheus/releases/download/v{{ prometheus_version }}/prometheus-{{ prometheus_version }}.linux-amd64.tar.gz"
-        dest: "/tmp/prometheus.tar.gz"
-    
-    - name: Unarchive Prometheus
-      unarchive:
-        src: "/tmp/prometheus.tar.gz"
-        dest: "/opt/"
-        remote_src: yes
+    - name: Create Prometheus user
+      user:
+        name: prometheus
+        system: yes
+        shell: /bin/false
 
-    - name: Configuration de Prometheus pour surveiller MariaDB
+    - name: Create required Prometheus directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: prometheus
+        group: prometheus
+        mode: '0755'
+      loop:
+        - /etc/prometheus
+        - /var/lib/prometheus
+        - /etc/prometheus/consoles
+        - /etc/prometheus/console_libraries
+        - /opt/prometheus_temp
+
+    - name: Copy Prometheus configuration file
       copy:
-        content: |
-          global:
-            scrape_interval: 15s
-          scrape_configs:
-            - job_name: 'mariadb'
-              static_configs:
-                - targets: ['localhost:9104']
-        dest: "/opt/prometheus-{{ prometheus_version }}.linux-amd64/prometheus.yml"
+        src: prometheus.yml
+        dest: /etc/prometheus/prometheus.yml
+        owner: prometheus
+        group: prometheus
+        mode: '0644'
 
+    - name: Install Prometheus dependencies
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - wget
+        - tar
+
+    - name: Download Prometheus tarball if not present
+      get_url:
+        url: "https://github.com/prometheus/prometheus/releases/download/v2.33.1/prometheus-2.33.1.linux-amd64.tar.gz"
+        dest: /tmp/prometheus.tar.gz
+
+    - name: Extract Prometheus to a temporary directory
+      unarchive:
+        src: /tmp/prometheus.tar.gz
+        dest: /opt/prometheus_temp
+        remote_src: yes
+        creates: /opt/prometheus_temp/prometheus-2.33.1.linux-amd64
+
+    - name: Move Prometheus binaries to /usr/local/bin
+      command: mv /opt/prometheus_temp/prometheus-2.33.1.linux-amd64/prometheus /usr/local/bin/prometheus
+      args:
+        creates: /usr/local/bin/prometheus
+
+    - name: Move Prometheus node exporter to /usr/local/bin
+      command: mv /opt/prometheus_temp/prometheus-2.33.1.linux-amd64/promtool /usr/local/bin/promtool
+      args:
+        creates: /usr/local/bin/promtool
+
+    - name: Clean up temporary Prometheus directory
+      file:
+        path: /opt/prometheus_temp
+        state: absent
+
+    - name: Copy Prometheus systemd service file
+      copy:
+        src: prometheus.service
+        dest: /etc/systemd/system/prometheus.service
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd to recognize new Prometheus service
+      systemd:
+        daemon_reload: yes
+
+    - name: Enable and start Prometheus service
+      systemd:
+        name: prometheus
+        enabled: yes
+        state: started
+    
     - name: Telechargement de l'exporteur MariaDB
       get_url:
         url: "https://github.com/prometheus/mysqld_exporter/releases/download/v{{ mysqld_exporter_version }}/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64.tar.gz"
