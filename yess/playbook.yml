@@ -145,7 +145,11 @@
     - name: Configuration de l'exporteur MariaDB
       copy:
         content: |
-          DATA_SOURCE_NAME='admin:{{ mariadb_admin_password }}@(localhost:3306)/'
+          [client]
+          user=admin
+          password=admin
+          host=localhost
+          port=3306
         dest: "/opt/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64/.env"
 
     - name: Installation des dépendances nécessaires
