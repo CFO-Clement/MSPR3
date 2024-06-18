@@ -6,11 +6,10 @@ sudo apt-get update
 
 # Installation des packages nécessaires
 echo "Installation de git, curl, wget, vim, python3, python3-pip, et mysql..."
-sudo apt-get install -y git curl wget vim python3 python3-pip mysql-server
+sudo apt-get install -y git curl wget vim python3 python3-pip
 
 # Installation de Ansible
 echo "Installation de Ansible..."
-sudo apt-add-repository --yes --update ppa:ansible/ansible
 sudo apt-get install -y ansible
 
 # Installation du package PyMySQL pour Python3 (pour l'utilisateur et pour root)
