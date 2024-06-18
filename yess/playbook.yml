@@ -119,11 +119,21 @@
         name: grafana-server
         enabled: yes
         state: started
+        
+    - name: Copie du fichier unitaire systemd pour mysqld_exporter
+      copy:
+        src: mysqld_exporter.service
+        dest: /etc/systemd/system/mysqld_exporter.service
+        owner: root
+        group: root
+        mode: '0644'
 
-    - name: Demarrage de l'exporteur MariaDB
+    - name: Recharger les unités systemd pour prendre en compte les nouveaux changements
+      systemd:
+        daemon_reload: yes
+
+    - name: Activer et démarrer le service mysqld_exporter
       systemd:
         name: mysqld_exporter
         enabled: yes
         state: started
-        exec_start_pre: "/bin/chmod +x /opt/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64/mysqld_exporter"
-        exec_start: "/opt/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64/mysqld_exporter --config.my-cnf=/opt/mysqld_exporter-{{ mysqld_exporter_version }}.linux-amd64/.env"
