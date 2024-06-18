@@ -146,3 +146,16 @@ ALTER TABLE REPRESENTER ADD FOREIGN KEY (person_id) REFERENCES PERSON (id);
 ALTER TABLE TRAITER ADD FOREIGN KEY (incident_id) REFERENCES INCIDENT (id);
 
 ALTER TABLE TRAITER ADD FOREIGN KEY (person_id) REFERENCES PERSON (id);
+
+-- Création des utilisateurs
+CREATE USER 'superuser'@'localhost' IDENTIFIED BY 'super_secure_password';
+CREATE USER 'readonly_user'@'localhost' IDENTIFIED BY 'readonly_secure_password';
+CREATE USER 'readwrite_user'@'localhost' IDENTIFIED BY 'readwrite_secure_password';
+
+-- Attribution des privilèges
+GRANT ALL PRIVILEGES ON mydatabase.* TO 'superuser'@'localhost';
+GRANT SELECT ON mydatabase.* TO 'readonly_user'@'localhost';
+GRANT SELECT, INSERT, UPDATE ON mydatabase.* TO 'readwrite_user'@'localhost';
+
+-- Appliquer les changements
+FLUSH PRIVILEGES;
