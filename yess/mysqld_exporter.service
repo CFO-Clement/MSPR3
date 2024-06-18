@@ -1,0 +1,12 @@
+[Unit]
+Description=MariaDB Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStartPre=/bin/chmod +x /opt/mysqld_exporter-%i.linux-amd64/mysqld_exporter
+ExecStart=/opt/mysqld_exporter-%i.linux-amd64/mysqld_exporter --config.my-cnf=/opt/mysqld_exporter-%i.linux-amd64/.env
+
+[Install]
+WantedBy=multi-user.target
