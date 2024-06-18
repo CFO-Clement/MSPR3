@@ -5,8 +5,8 @@ After=network-online.target
 
 [Service]
 Type=simple
-ExecStartPre=/bin/chmod +x /opt/mysqld_exporter-%i.linux-amd64/mysqld_exporter
-ExecStart=/opt/mysqld_exporter-%i.linux-amd64/mysqld_exporter --config.my-cnf=/opt/mysqld_exporter-%i.linux-amd64/.env
+ExecStartPre=/bin/chmod +x /opt/mysqld_exporter-0.13.0.linux-amd64/mysqld_exporter
+ExecStart=/opt/mysqld_exporter-0.13.0.linux-amd64//mysqld_exporter --config.my-cnf=/opt/mysqld_exporter-0.13.0.linux-amd64/.env
 
 [Install]
 WantedBy=multi-user.target
